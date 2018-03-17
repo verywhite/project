@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>别踩白块</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<script src="https://js.fundebug.cn/fundebug.0.3.3.min.js"
+        apikey="e6f8dc40588c19c37fb89ce5017be3b91d54dc90567841f2327d85dfbe29dde4"></script>
+</head>
+<body>
+    <h1>score</h1>
+    <h2 id='score'>0</h2>
+    <h3>按p键暂停或开始</h3>
+    <h3>按f5键重新开始</h3>
+    <div id='main'>
+    	<div id='container'></div>
+    </div>
+
+</body>
+<style>
+#main{
+	width:400px;
+	height:400px;
+	background-color:gray;
+	border:2px solid black;
+	margin:0 auto;
+	position:relative;
+	overflow:hidden; /*为什么要用relative*/
+}
+#container{
+	width:100%;
+	height:400px;
+	top:-100px;
+	position:relative;/*relative*/
+
+}
+.row{
+	width:100%;
+	height:100px;
+}
+.cell{
+	width:100px;
+	height:100px;
+	float:left;
+}
+.black{
+	background-color:black;
+}
+
+</style>
+<script type='text/javascript'>
+	var speed=2;
+	var clock=null;
+	var state=0;
+	var flag=0;
+	function start(){
+		clock=window.setInterval('move()',30);
+	}
+	function move(){
+		var con=$('container');
+		var top=parseInt(window.getComputedStyle(con,null)['top']);
+		console.log(top);
+		if(top==-100){
+			var rows=con.childNodes;
+			if((rows.length==5)&&(rows[rows.length-1].pass!==1)){
+				fail();	
+				return;
+			}
+		}
+		if(top+speed>0)
+		{
+			top=0;
+		}else{
+			top+=speed;
+			con.style.top=top+'px';
+		}
+			if(top==0){
+			createrow();
+			con.style.top='-100px';
+			//删除最后一个子元素
+			drop();
+
+		}
+
+	}
+	//创造行
+	function createrow(){
+		var row=creatediv('row');
+		var classes=createSn();
+		var con=$('container');
+		for(var i=0;i<4;i++)
+		{
+			row.appendChild(creatediv(classes[i]));
+		}
+		if(con.firstChild==null){
+			con.appendChild(row);
+		}else{
+			con.insertBefore(row,con.firstChild);
+		}
+	}
+	//创造div,classname为div名字
+	function creatediv(className){
+		var div=document.createElement('div');
+		div.className=className;
+		return div;
+	}
+	//创造黑块
+	function createSn(){
+		var arr=['cell','cell','cell','cell'];
+		var i=Math.floor(Math.random()*4);
+		arr[i]='cell black';
+		return arr;
+	}
+	//删节点
+	function drop(){
+		var con=$('container');
+		if(con.childNodes.length==6){
+			con.removeChild(con.lastChild);/*con*/
+		}
+	}
+	//失败
+	function fail(){
+		clearInterval(clock);
+		state=3;
+		alert('over');
+	}
+	
+	function init(){
+		for(var i=0;i<4;i++)
+		{
+			createrow();
+		}
+		//点击事件
+		$('main').onclick=function(e){
+			judge(e);
+		}
+	}
+	//点击事件中判断游戏是否失败
+	function judge(e){
+		if(state==3){
+			alert('f5 again');
+			return;/*没有会怎样*/
+		}
+		if(e.target.className.indexOf('black')==-1){
+			fail();
+		}else{
+			e.target.className='cell';
+			e.target.parentNode.pass=1;
+			score();
+		}
+	}
+	function score(){
+		var note=parseInt($('score').innerHTML)+1;
+		$('score').innerHTML=note;
+		if(note%2==0){
+			jiasu();
+		}
+	}
+	function jiasu(){
+		speed+=2;
+		if(speed==16){
+			clearInterval(clock);
+			alert('pass');
+		}
+
+	}
+	init();
+	start();
+	function $(id){
+		return document.getElementById(id);
+	}
+	document.onkeyup=function(e){
+		e=e||window.e;
+		if(e.keyCode==80){
+			if(flag==0){
+				clearInterval(clock);
+				flag=1;
+			}
+			else{
+				clock=window.setInterval('move()',30);
+				flag=0;
+			}
+		}
+	}
+</script>
+
+</html>
