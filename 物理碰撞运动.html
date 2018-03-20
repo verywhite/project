@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>物理拖拽运动</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<style type='text/css'>
+body{
+	user-select: none;
+}
+#test{
+	width:320px;
+	position:absolute;
+	left:300px;
+	top:30px;
+	font-size:15px;
+}
+.window{
+	position:relative;
+	border:1px solid ;
+	border-radius:10px;
+	background: linear-gradient(to bottom,#fbfaff,#bdbdbd);
+	box-shadow:2px 2px 2px #888888;
+}
+.window_top{
+	width:100%;
+	border-radius:10px;
+	border-bottom:1px solid;
+	font-size:0.9em;
+	background: :linear-gradient(to bottom,#fbfaff,#bdbdbd);
+}
+span{
+	display: inline-block;
+	height:1em;
+	width:1em;
+	border:1px solid;
+	border-ardius:10px;
+	background: #fefffd
+}
+</style>
+<script type='text/javascript'>
+function win(attr){
+	switch(attr){
+		case 'height':
+		if(window.innerHeight)
+		{
+			winHeight=window.innerHeight;
+			return winHeight;
+		}
+		else if((document.body)&&(document.body.clientHeight))
+		{
+			winHeight=document.body.clientHeight;
+			return winHeight;
+		}
+		if(document.documentElement&&document.documentElement.clientHeight)
+		{
+			winHeight=document.documentElement.clientHeight;
+			return winHeight;
+		}
+		break;
+		case 'width':
+		if(window.innerWidth)
+		{
+			winWidth=window.innerWidth;
+			return winWidth;
+		}
+		else if((document.body)&&(document.body.clientWidth))
+		{
+			winWidth=document.body.clientWidth;
+			return winWidth;
+		}
+		if(document.documentElement&&document.documentElement.clientWidth)
+		{
+			winWidth=document.documentElement.clientWidth;
+		}
+		break;
+		case 'scrollTop':
+		var scrollTop;
+		if(typeof window.pageYOffset!='undefined')
+		{
+			scrollTop=window.pageYOffset;
+		}
+		else if(typeof document.compatMode!='undefined'&&document.compatMode!='BackCompat')
+		{
+			scrollTop=document.documentElement.scrollTop;
+		}
+		else if(typeof document.body!='undefined')
+		{
+			scrollTop=document.body.scrollTop;
+		}
+		return scrollTop;
+		break;
+		defaule:return 0;
+		break;
+	}
+}
+window.onload=function()
+{
+	var odiv=document.getElementById('test');
+	var timer;
+	//记录速度
+	var speedx=0;
+	var speedy=0;
+	//记录上一个拖拽点的位置
+	var lastx=0;
+	var lasty=0;
+	odiv.onmousedown=function(e)
+	{
+		clearInterval(timer);
+		var oe=e||event;
+		var disx=oe.clientX-odiv.offsetLeft;
+		var disy=oe.clientY-odiv.offsetTop;
+		//拖动鼠标
+		document.onmousemove=function(e)
+		{
+			var oe=oe||e;
+			var left=oe.clientX-disx;
+			var top=oe.clientY-disy;
+			//记录更新对象位置
+			odiv.style.left=left+'px';
+			odiv.style.top=top+'px';
+			//计算拖拽速度
+			speedx=left-lastx;
+			speedy=top-lasty;
+			lastx=left;
+			lasty=top;
+		}
+		document.onmouseup=function(){
+			document.onmousemove=null;
+			document.onmouseup=null;
+			timer=setInterval(function()
+			{
+				//重力，数值下落的速度增大
+				speedy+=3;
+				var left=odiv.offsetLeft+speedx;
+				var top=odiv.offsetTop+speedy;
+				//碰到底部，y轴速度反向，速度减小
+				if(top>=(win('height')-odiv.offsetHeight))
+				{
+					speedy*=-0.8;
+					speedx*=0.8;
+					top=(win('height')-odiv.offsetHeight);
+				}
+				//碰到顶部，y轴速度反向，速度减小
+				else if(top<-0)
+				{
+					speedy*=-0.8;
+					speedx*=0.8;
+					top=(win('height')-odiv.offsetHeight);
+				}
+				//碰到右壁，x轴速度方向相反且减小
+				else if(left>=(win('width')-odiv.offsetWidth))
+				{
+					speedx*=-0.8;
+					left=(win('width')-odiv.offsetWidth);
+				}
+				else if(left<=0)
+				{
+					speedx*=-0.8;
+					left=0;
+				}
+				//速度很小时忽略速度
+				if(Math.abs(speedx)<1)
+				{
+					speedx=0;
+				}
+				if(Math.abs(speedy)<1)
+				{
+					speedy=0;
+				}
+				if(speedx==0&&speedy==0&&top==(win('height')-odiv.offsetHeight))
+				{
+					clearInterval(timer);
+				}
+				odiv.style.left=left+'px';
+				odiv.style.top=top+'px';
+			},30);
+		}
+	}
+
+}
+</script>
+</head>
+<body>
+    <div id="test">
+	<div class="window" id="about">
+		<div class="window_top">
+		<span class="window_top_close" title="关闭"></span>
+		<span class="window_top_min" title="最小化"></span>
+		<span class="window_top_max" title="合适大小"></span>
+		</div>
+		<div class="window_main">
+		简单物理碰撞
+		</div>
+	</div>
+</div>
+</body>
+</html>
