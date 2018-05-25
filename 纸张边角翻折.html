@@ -24,14 +24,14 @@
   right:0;
   z-index:1;
   }
- #top_right_change{
- display:none;
- width:95px;
- height:95px;
- position:absolute;
- top:0;
- right:0;
- z-index:-1;
+#top_right_change{
+  display:none;
+  width:95px;
+  height:95px;
+  position:absolute;
+  top:0;
+  right:0;
+  z-index:-1;
  }
   </style>
   <script type="text/javascript" src="js/jq.js"></script>
@@ -40,10 +40,10 @@
   $("#paper_top_right").hover(function(){show_top_right();},function(){hide_top_right();});
   });
   function show_top_right(){
-	$("#paper_top_right_animate").stop(true,true).animate ({height:"150px",width:"150px"},"slow");
+	$("#paper_top_right_animate").stop(true,false).animate ({height:"150px",width:"150px"},"slow");
   }
   function hide_top_right(){
-	$("#paper_top_right_animate").stop(true,true).animate ({height:"30px",width:"30px"},"slow");	  
+	$("#paper_top_right_animate").stop(true,false).animate ({height:"30px",width:"30px"},"slow");	  
   }
 
 //如要加入广告，请参照下面代码
@@ -68,7 +68,7 @@
  <body>
   <div id="paper_top_right">
   <div id="paper_top_right_animate"></div>
-  <img src=" " alt="" id="top_right_change" />
+  <img src="img/1.png" alt="" id="top_right_change" />
   </div>
  </body>
 </html>
