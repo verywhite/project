@@ -23,7 +23,7 @@ window.onload=function(){
 				oPin.className='pin';
 				oBox.appendChild(oPin);
 				var oImg=document.createElement('img');
-				oImg.src='./images/'+dataInt.data[i].src;
+				oImg.src='img/'+dataInt.data[i].src;
 				oPin.appendChild(oImg);
 			}
 			waterfall('main','box');
