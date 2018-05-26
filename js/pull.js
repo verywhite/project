@@ -1,10 +1,3 @@
-/**
- *
- * @authors Your Name (you@example.org)
- * @date    2017-12-19 20:52:15
- * @version $Id$
- */
-
 window.onload=function(){
 	waterfall('main','box');
 	window.onscroll=function()
